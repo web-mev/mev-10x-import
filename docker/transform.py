@@ -1,9 +1,11 @@
 #!/opt/conda/bin/python3
 
-import pandas as pd
-from scipy.io import mmread
 import argparse
 import gzip
+import json
+import os
+import pandas as pd
+from scipy.io import mmread
 import sys
 
 
@@ -38,6 +40,8 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
+    working_dir = os.path.dirname(args.matrix)
+
     with gzip.open(args.matrix, 'rb') as fin:
         m = mmread(fin)
 
@@ -58,4 +62,10 @@ if __name__ == '__main__':
         sys.exit(1)
 
     df = pd.DataFrame.sparse.from_spmatrix(m, index=feature_ids, columns=barcodes)
-    df.to_csv(args.output_fname, sep='\t')
+    fout = os.path.join(working_dir, args.output_fname)
+    df.to_csv(fout, sep='\t')
+
+    outputs = {
+        'output_matrix': fout
+    }
+    json.dump(outputs, open(os.path.join(working_dir, 'outputs.json'), 'w'))
