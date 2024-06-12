@@ -1,0 +1,8 @@
+name: base
+channels:
+  - defaults
+  - anaconda
+dependencies:
+  - pandas=2.2.1
+  - python=3.12.0
+  - scipy=1.13.1
